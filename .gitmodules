@@ -1,0 +1,3 @@
+[submodule "ext/pbrt-v3"]
+	path = ext/pbrt-v3
+	url = git@github.com:mmp/pbrt-v3.git

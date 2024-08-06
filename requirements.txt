@@ -1,0 +1,10 @@
+numpy
+matplotlib
+scipy
+tqdm
+imageio
+imageio-ffmpeg
+opencv-python
+Ninja
+imageio
+h5py

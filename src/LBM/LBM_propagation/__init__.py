@@ -1,0 +1,2 @@
+from .abstract_LBM_propagation import AbstractLBMPropagation
+from .LBM_propagation_2d import LBMPropagation2d

@@ -1,0 +1,17 @@
+demo/demo_data*/
+demo/records*/
+demo/_45degree*/
+demo/_cylinder_g9/
+demo/_ethaline_g9/
+demo/_InfinitePlane_g9/
+demo/experiments/
+demo/experiments_positive/
+demo/NF/
+demo/PF/
+demo/save_ppp_g9/
+Re_*.h5
+build/
+log/
+.vscode
+*/__pycache__/
+__pycache__/

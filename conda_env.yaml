@@ -1,0 +1,14 @@
+name: dff
+
+channels:
+  - pytorch
+  - conda-forge
+
+dependencies:
+  - python=3.7
+  - pip
+  - cudatoolkit
+  - pytorch=1.8.1
+  - torchvision=0.9.1
+  - pip:
+      - -r requirements.txt
