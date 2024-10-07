@@ -82,6 +82,26 @@ def create_2d_meshgrid_tensor(
     return mgrid
 
 
+def create_3d_meshgrid_tensor(
+    size: List[int],
+    device: torch.device = torch.device("cpu"),
+    dtype=torch.float32,
+) -> torch.Tensor:
+    [batch, _, depth, height, width] = size
+    z_pos, y_pos, x_pos = torch.meshgrid(
+        [
+            torch.arange(0, depth, device=device, dtype=dtype),
+            torch.arange(0, height, device=device, dtype=dtype),
+            torch.arange(0, width, device=device, dtype=dtype),
+        ]
+    )
+
+    mgrid = torch.stack([x_pos, y_pos, z_pos], dim=0)  # [C, D, H, W]
+    mgrid = mgrid.unsqueeze(0)  # [B, C, D, H, W]
+    mgrid = mgrid.repeat(batch, 1, 1, 1, 1)
+    return mgrid
+
+
 def create_droplet_2d(
     droplet_center: torch.Tensor,
     droplet_radius: float,

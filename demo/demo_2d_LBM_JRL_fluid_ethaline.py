@@ -54,18 +54,22 @@ def main(
     vel_obs_real: float = 100e-6,
     gravity_strength_real: float = -9.8,
     Rg: float = 3,
+    fluid: str = "ethaline",
+    refine: int =  1,
 ):
     dim = 2
     Q = 9
     
     path = pathlib.Path(__file__).parent.absolute()
-    prefix = f"_ethaline_g{int(abs(gravity_strength_real))}"
+    prefix = f"_{fluid}_g{int(abs(gravity_strength_real))}"
     mkdir(f"{path}/{prefix}")
     Re = Re if Re > 1e-5 else 1e-5
     saved_fluid_name = f"Re_{Re}.h5"
 
+    res = [refine * x for x in res]
+
     # === Parameters of fluid
-    radius_obs = 6 + 0.50000000000001  # 12.5+, TODO: int(12.0 * (min(res) - 12) / 100)
+    radius_obs = refine * 6 + 0.50000000000001  # 12.5+, TODO: int(12.0 * (min(res) - 12) / 100)
     dt = 1  # [s] Warning: cannot be set as any other value!
     dx = 1  # [m] Warning: cannot be set as any other value!
     tau = 1.0
@@ -76,7 +80,7 @@ def main(
     density_wall = 1
     mu = visc * density_fluid
     vel_obs = Re * visc / radius_obs  # 6.785e-6
-    inflow_height = (
+    inflow_height = refine * (
         (40) + 0.50000000000001
     )  # 10.5+, TODO: int(12.0 * (min(res) - 12) / 100)
     inflow_height_int = int(inflow_height + 0.5 * dx)
@@ -317,6 +321,14 @@ if __name__ == "__main__":
         type=float,
         default=4,
         help=("Rg is the ratio of the platform and the tip radius"),
+    )
+    
+    parser.add_argument(
+        "--fluid", type=str, default="ethaline", help=("The type of fluid")
+    )
+
+    parser.add_argument(
+        "--refine", type=int, default=1, help="mesh refinemnet"
     )
 
     opt = vars(parser.parse_args())

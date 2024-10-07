@@ -57,6 +57,8 @@ def main(
     vel_obs_real: float = 100e-6,
     gravity_strength_real: float = -9.8,
     Rg: float = 3,
+    fluid: str = "ethaline",
+    refine: int =  1,
     is_negative: bool = False,
 ):
     dim = 2
@@ -67,22 +69,24 @@ def main(
     saved_fluid_name=f"Re_{Re if Re > 3e-5 else 3e-5}.h5"
     
     path = pathlib.Path(__file__).parent.absolute()
-    prefix = f"_ethaline_g{int(abs(gravity_strength_real))}"
+    prefix = f"_{fluid}_g{int(abs(gravity_strength_real))}"
     h5py_fluid_filename = f"{path}/{prefix}/{saved_fluid_name}"
     mkdir(f"{path}/{prefix}")
     if load_fluid and not os.path.exists(h5py_fluid_filename):
         load_fluid = False
         print("Error: We cannot find this fluid field")
         exit(0)
+    
+    res = [refine * x for x in res]
 
     # === Parameters of general
-    radius_obs = 6 + 0.50000000000001  # 12.5+, TODO: int(12.0 * (min(res) - 12) / 100)
+    radius_obs = refine * 6 + 0.50000000000001  # 12.5+, TODO: int(12.0 * (min(res) - 12) / 100)
     radius_obs_real = 12.5e-6  # 12.5 um, the radius of obstacle [m]
     dt = 1  # [s] Warning: cannot be set as any other value!
     dx = 1  # [m] Warning: cannot be set as any other value!
     c = dx / dt
     cs2 = c * c / 3.0
-    inflow_height = (
+    inflow_height = refine * (
         (40) + 0.50000000000001
     )  # 10.5+, TODO: int(12.0 * (min(res) - 12) / 100)
     inflow_height_int = int(inflow_height + 0.5 * dx)
@@ -92,8 +96,8 @@ def main(
     tau_D = 1.0
     D = cs2 * (tau_D - 0.5)
     vel_obs_conv = Pe * D / radius_obs_conv
-    if vel_obs_conv > 0.01:
-        vel_obs_conv = 0.01
+    if vel_obs_conv > 0.1:
+        vel_obs_conv = 0.1
         D = vel_obs_conv * radius_obs_conv / Pe
         tau_D = 0.5 + D / cs2
 
@@ -446,7 +450,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--balance_time",
         type=float,
-        default=6000,
+        default=600,
         help="For how many time to run the simulation for balance",
     )
 
@@ -483,6 +487,14 @@ if __name__ == "__main__":
         type=float,
         default=4,
         help=("Rg is the ratio of the platform and the tip radius"),
+    )
+    
+    parser.add_argument(
+        "--fluid", type=str, default="ethaline", help=("The type of fluid")
+    )
+
+    parser.add_argument(
+        "--refine", type=int, default=1, help="mesh refinemnet"
     )
     
     parser.add_argument('--is_negative', dest='is_negative', action='store_true')
